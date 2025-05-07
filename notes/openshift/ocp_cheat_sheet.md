@@ -269,6 +269,33 @@ spec:
 ...
 ```
 
+limit range
+-----------
+
+- sample template
+```
+apiVersion: v1
+kind: LimitRange
+metadata:
+  name: <LIMITRANGE_IDENTIFIER>
+  namespace: <NAMESPACE_IDENTIFIER>
+spec:
+  limits:
+  - type: <Container/Pod>
+    default:
+      cpu: 200m
+      memory: 1Gi
+    defaultRequest:
+      cpu: 100m
+      memory: 1Gi
+    max:
+      cpu: 300m
+      memory: 2Gi
+    min:
+      cpu: 50m
+      memory: 128Mi
+```
+
 templates
 ---------
 
@@ -285,4 +312,76 @@ templates
 `oc new-app --template=<TEMPLATE_IDENTIFIER> -p <PARAM1>=<VALUE1> -p <PARAM2>=<VALUE2> -p <PARAMX>=<VALUEX>`
 
 - use `oc process` to generate a manifest and use `oc apply` to deploy the generated manifest
-` oc process <TEMPLATE_IDENTIFIER> -p <PARAM1>=<VALUE1> -p <PARAM2>=<VALUE2> -p <PARAMX>=<VALUEX> | oc apply -f -`
+`oc process <TEMPLATE_IDENTIFIER> -p <PARAM1>=<VALUE1> -p <PARAM2>=<VALUE2> -p <PARAMX>=<VALUEX> | oc apply -f -`
+
+self-service
+------------
+
+### create a self-service template
+
+- create project template
+`oc adm create-bootstrap-project-template -o yaml > </PATH/TO/FILE>`
+
+- create a limitrange in a namespace
+**ocp console** \> **Administration** \> **LimitRanges** \> **Create LimitRange**
+
+- create a quota in a namespace
+**ocp console** \> **Administration** \> **ResouceQuotas** \> **Create ResourceQuota**
+
+- append limitrange and quota to template
+`oc get limitrange,quota -n <NAMESPACE_IDENTIFIER> -o yaml >> </PATH/TO/FILE>`
+
+- edit template file
+  - apply the following changes to the *subjects* key in the *admin* role binding
+    - change the *kind* key to *Group*
+    - change the *name* key to *<GROUP_IDENTIFIER>*
+    - change the *namespace* to *${PROJECT_NAME}*
+    - move the *LimitRange* section after the *RoleBinding* definition
+    - remove the following keys from the *LimitRange* and *Template* definitions
+      - creationTimestamp
+      - resourceVersion
+      - uid
+
+- create template
+`oc apply -f </PATH/TO/FILE> -n openshift-config`
+
+- set template as default for new projects
+`oc edit projects.config.openshift.io cluster`
+```
+apiVersion: config.openshift.io/v1
+kind: Project
+metadata:
+...output omitted...
+  name: cluster
+...output omitted...
+spec:
+  projectRequestTemplate:
+    name: <TEMPLATE_IDENTIFIER>
+```
+
+- wait for pod deployment
+`watch oc get pod -n openshift-apiserver`
+
+### modify clusterrolebinding self-provisioners
+
+- edit self-provisioners
+`oc edit clusterrolebinding self-provisioners`
+
+- under subjects \> name set name to \<GROUP_IDENTIFIER\>
+```
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+...output omitted...
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: self-provisioner
+subjects:
+- apiGroup: rbac.authorization.k8s.io
+  kind: Group
+  name: <GROUP_IDENTIFIER>
+```
+
+- ensure that the self-provisioner changes do not get rewritten
+`oc annotate clusterrolebinding/self-provisioners --overwrite rbac.authorization.kubernetes.io/autoupdate=false`
