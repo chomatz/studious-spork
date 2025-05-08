@@ -30,6 +30,24 @@ the below commands inspect the current namespace - *add `-n <NAMESPACE_IDENTIFIE
 `oc delete -f </PATH/TO/FILE1> -f </PATH/TO/FILE2> -f </PATH/TO/FILEX>`
 `oc delete -f .`
 
+service accounts
+----------------
+
+- create service account
+`oc create sa <USER_IDENTIFIER> -n <NAMESPACE_IDENTIFIER>`
+
+- add role to service account
+`oc adm policy add-role-to-user <ROLE_IDENTIFIER> system:serviceaccount:<NAMESPACE_IDENTIFIER>:<USER_IDENTIFIER>`
+
+- configure scc to run as any uid
+`oc adm policy add-scc-to-user anyuid -z <USER_IDENTIFIER> -n <NAMESPACE_IDENTIFIER>`
+
+- configure prvileged scc
+`oc adm policy add-scc-to-user privileged -z <USER_IDENTIFIER> -n <NAMESPACE_IDENTIFIER>`
+
+- assign service account to deployment
+`oc set serviceaccount deployment/<DEPLOYMENT_IDENTIFIER> <USER_IDENTIFIER> -n <NAMESPACE_IDENTIFIER>`
+
 htpasswd authentication
 -----------------------
 
@@ -44,6 +62,9 @@ htpasswd authentication
 
 - assign a user to a role
 `oc adm policy add-cluster-role-to-user <ROLE_IDENTIFIER> <USER_IDENTIFIER>`
+
+- edit oauth from gui
+**Administration** \> **Cluster Settings** \> **Configuration** \> **Oauth** \> **Identity pvoviders** \> **Add** \> **HTPasswd**
 
 - export oauth configuration
 `oc get oauth cluster -o yaml > </PATH/TO/FILE>`
@@ -93,7 +114,7 @@ rbac
 - **basic-user** - read-only access
 - **cluster-admin** - administrative access on entire cluster
 - **cluster-status** - access cluster status information
-- **cluster-reade** - view most of the objects but cannot modify them
+- **cluster-reader** - view most of the objects but cannot modify them
 - **edit** - modify common application resources on the project
 - **self-provisioner** - can create own projects
 - **view** - view project resources
@@ -145,14 +166,18 @@ manifests
 routes
 ------
 
-### expose service
+### create a service
+
+`oc expose deployment <DEPLOYMENT_IDENTIFIER> --name <SERVICE_IDENTIFIER> --port <PORT_IDENTIFIER>`
+
+### expose a service
 
 `oc expose svc <SERVICE_IDENTIFIER> --hostname <APPLICATION_URL>`
 
 ### ssl
 
 - create ssl secret
-`oc create secret tls <SECRET_IDENTIFIER> --cert </PATH/TO/CERTIFICATE> --KEY </PATH/TO/PRIVATE/KEY>`
+`oc create secret tls <SECRET_IDENTIFIER> --cert </PATH/TO/CERTIFICATE> --key </PATH/TO/PRIVATE/KEY>`
 
 - create an encrypted edge route
 `oc create route edge <ROUTE_IDENTIFIER> --service <SERVICE_IDENTIFIER> --hostname <APPLICATION_URL> --key </PATH/TO/PRIVATE/KEY> --cert </PATH/TO/CERTIFICATE>`
@@ -219,7 +244,7 @@ helm
 - search for charts
 `helm search repo`
 
-- search for charts and display al;l versions
+- search for charts and display all versions
 `helm search repo --versions`
 
 - test installation
