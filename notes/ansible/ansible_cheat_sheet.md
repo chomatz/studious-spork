@@ -69,7 +69,7 @@ ansible-galaxy collection install <collection_name> -p collections
 *user creation task
 - name: create test user
   ansible.builtin.user:
-    name: examinee
+    name: user
     comment: test user
     shell: /bin/bash
     groups: wheel
