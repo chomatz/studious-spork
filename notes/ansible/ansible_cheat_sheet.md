@@ -151,11 +151,55 @@ linux-system-roles
 sudo dnf install -y linux-system-roles
 ```
 
-- individual documentation can be found at `/usr/share/doc/linux-system-roles/`
+- individual role example(s) can be found at `/usr/share/doc/linux-system-roles/<role_name>`
 
-*collection installation
-ansible-galaxy collection install </path/to/archive> -p collections
-ansible-galaxy collection install <collection_name> -p collections
+collections
+-----------
+
+### requirements file
+
+- sample `requirements.yml`
+
+```
+---
+
+collections:
+  - name: <collection_url1>
+  - name: <collection_url2>
+  - name: <collection_url3>
+
+...
+```
+
+- install collection(s) using `requirements.yml`
+
+```
+ansible-galaxy collection install -r </path/to/requirements.yml>
+```
+
+roles
+-----
+
+### requirements file
+
+- sample `requirements.yml`
+
+```
+---
+
+- name: <role_name>
+  src: <role_url>
+- name: customrole
+  src: https://fully.qualified.domain.name/customrole.tar
+
+...
+```
+
+- install role(s) using `requirements.yml`
+
+```
+ansible-galaxy install -r </path/to/requirements.yml>
+```
 
 *user creation task
 - name: create test user
