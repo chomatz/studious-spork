@@ -190,6 +190,38 @@ sample playbooks
 ...
 ```
 
+### jinja2 templating
+
+generate host file entries for all hosts
+
+- jinja2 template
+
+```
+127.0.0.1 localhost localhost.localdomain localhost4 localhost4.localdomain4
+::1 localhost localhost.localdomain localhost6 localhost6.localdomain6
+{% for host in ansible_play_hosts_all %}
+{{ hostvars[host].ansible_facts.default_ipv4.address }} {{ hostvars[host].ansible_facts.fqdn }} {{ hostvars[host].ansible_facts.hostname }}
+{% endfor %}
+```
+
+- playbook
+
+```
+---
+
+- name: upload a dynamic template
+  hosts: <nodes>
+
+  tasks:
+
+    - name: jinja 2 templating
+      ansible.builtin.copy:
+        dest: /tmp/hosts
+        src: </path/to/jinja2/template>
+
+...
+```
+
 linux-system-roles
 ------------------
 
