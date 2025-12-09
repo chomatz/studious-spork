@@ -100,6 +100,48 @@ sample playbooks
 ...
 ````
 
+### install packages
+
+````
+---
+
+- name: install package set a
+  hosts: <nodes>
+
+  tasks:
+
+    - name: install packagea and packageb
+      ansible.builtin.package:
+        name:
+          - packagea
+          - packageb
+        state: present
+
+- name: install package set b
+  hosts: <nodes>
+
+  tasks:
+
+    - name: install packagec and packaged
+      ansible.builtin.package:
+        name:
+          - packagec
+          - packaged
+        state: present
+
+- name: update installed packages
+  hosts: <nodes>
+
+  tasks:
+
+    - name: update packages
+      ansible.builtin.package:
+        name: "*"
+        state: latest
+
+...
+````
+
 *collection installation
 ansible-galaxy collection install </path/to/archive> -p collections
 ansible-galaxy collection install <collection_name> -p collections
