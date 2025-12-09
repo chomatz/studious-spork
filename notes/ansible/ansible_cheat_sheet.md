@@ -66,21 +66,21 @@ all:
       groupa:
       groupb:
 ...
-````
+```
 
 - check managed hosts
 
-````
+```
 ansible-inventory --graph
 ansible all -m ping
-````
+```
 
 sample playbooks
 ----------------
 
 ### setup yum repositories
 
-````
+```
 ---
 
 - name: configure yum repositories
@@ -98,11 +98,11 @@ sample playbooks
         enabled: true
 
 ...
-````
+```
 
 ### install packages
 
-````
+```
 ---
 
 - name: install package set a
@@ -140,7 +140,18 @@ sample playbooks
         state: latest
 
 ...
-````
+```
+
+linux-system-roles
+------------------
+
+- install linux-system-roles
+
+```
+sudo dnf install -y linux-system-roles
+```
+
+- individual documentation can be found at `/usr/share/doc/linux-system-roles/`
 
 *collection installation
 ansible-galaxy collection install </path/to/archive> -p collections
