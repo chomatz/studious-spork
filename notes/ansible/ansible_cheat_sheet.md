@@ -225,6 +225,52 @@ generate host file entries for all hosts
 ...
 ```
 
+### create file(s)/dir(s) and set special permission
+
+```
+---
+
+- name: create a directory
+  ansible.builtin.file:
+    path: /path/to/dir
+    state: directory
+    owner: <user>
+    group: <group>
+    mode: "0755"
+
+- name: create a symlink
+  ansible.builtin.file:
+    path: /path/to/symlink
+    src: /path/to/source
+    state: link
+
+- name: create a hardlink
+  ansible.builtin.file:
+    path: /path/to/hardlink
+    src: /path/to/source
+    state: hard
+
+- name: set file permissions - set uid
+  ansible.builtin.file:
+    path: /path/to/file
+    state: file
+    mode: "04644"
+
+- name: set file permissions - set gid
+  ansible.builtin.file:
+    path: /path/to/file
+    state: file
+    mode: "02644"
+
+- name: set file permissions - set sticky bit
+  ansible.builtin.file:
+    path: /path/to/file
+    state: file
+    mode: "01644"
+
+...
+```
+
 linux-system-roles
 ------------------
 
