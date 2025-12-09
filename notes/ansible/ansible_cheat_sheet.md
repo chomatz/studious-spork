@@ -47,6 +47,7 @@ ansible-navigator:
 ```
 
 - create the `inventory` file
+```
 ---
 all:
   groupa:
@@ -64,6 +65,7 @@ all:
       groupa:
       groupb:
 ...
+```
 
 *collection installation
 ansible-galaxy collection install </path/to/archive> -p collections
