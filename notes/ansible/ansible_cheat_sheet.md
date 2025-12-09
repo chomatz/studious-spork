@@ -1,8 +1,8 @@
 ansible cheat sheet
 ===================
 
-ansible control node setup
---------------------------
+ansible control node initial setup
+----------------------------------
 
 - install ansible-navigator
 
@@ -47,6 +47,7 @@ ansible-navigator:
 ```
 
 - create the `inventory` file
+
 ```
 ---
 all:
@@ -65,7 +66,16 @@ all:
       groupa:
       groupb:
 ...
-```
+````
+
+- check managed hosts
+
+````
+ansible-inventory --graph
+ansible all -m ping
+````
+
+
 
 *collection installation
 ansible-galaxy collection install </path/to/archive> -p collections
