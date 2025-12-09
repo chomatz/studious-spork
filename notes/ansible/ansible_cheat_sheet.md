@@ -46,20 +46,23 @@ ansible-navigator:
     enable: false
 ```
 
-*yml inventory
+- create the `inventory` file
 ---
 all:
-  hosts:
+  groupa:
     servera:
       ansible_host: <fqdn/ip>
     serverb:
       ansible_host: <fqdn/ip>
-  vars:
-    ansible_user: <username>
-    ansible_ssh_private_key_file: </path/to/ssh/private/key>
-    ansible_become: yes
-    ansible_become_method: sudo
-    ansible_become_pass: <password>
+  groupb:
+    serverc:
+      ansible_host: <fqdn/ip>
+    serverd:
+      ansible_host: <fqdn/ip>
+  groupc:
+    children:
+      groupa:
+      groupb:
 ...
 
 *collection installation
