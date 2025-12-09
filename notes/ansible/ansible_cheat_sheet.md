@@ -180,6 +180,13 @@ ansible-galaxy collection install -r </path/to/requirements.yml>
 roles
 -----
 
+### initialization
+
+```
+ansible-galaxy role init --init-path </path/to/roles> <role_name>
+```
+
+
 ### requirements file
 
 - sample `requirements.yml`
@@ -199,6 +206,45 @@ roles
 
 ```
 ansible-galaxy install -r </path/to/requirements.yml>
+```
+
+### using roles
+
+- sample 1
+
+```
+---
+
+- name: sample 1 using role
+  hosts: <nodes>
+
+  roles:
+    - <role_name1>
+    - <role_name2>
+    - <role_name3>
+
+...
+```
+
+- sample 2
+
+```
+---
+
+- name: sample 2 using include_role
+  hosts: <nodes>
+
+  tasks:
+
+    - name: use include_role 1
+      ansible.builtin.include_role:
+        name: <role_name1>
+
+    - name: use include_role 2
+      ansible.builtin.include_role:
+        name: <role_name2>
+
+...
 ```
 
 *user creation task
