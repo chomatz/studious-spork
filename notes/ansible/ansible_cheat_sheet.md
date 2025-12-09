@@ -75,7 +75,30 @@ ansible-inventory --graph
 ansible all -m ping
 ````
 
+sample playbooks
+----------------
 
+### setup yum repositories
+
+````
+---
+
+- name: configure yum repositories
+  hosts: <hosta,hostb,groupa>
+
+  tasks:
+
+    - name: configure yum repository
+      ansible.builtin.yum_repository:
+        name: <repo_name>
+        description: <repo_description>
+        baseurl: <url>
+        gpgcheck: true
+        gpgkey: <key_location>
+        enabled: true
+
+...
+````
 
 *collection installation
 ansible-galaxy collection install </path/to/archive> -p collections
