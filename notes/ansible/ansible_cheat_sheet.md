@@ -142,6 +142,54 @@ sample playbooks
 ...
 ```
 
+### configure logical volumes with conditions
+
+```
+---
+
+- name: provision a logical volume with conditions
+  hosts: <nodes>
+
+  tasks:
+
+    - block:
+
+        - name: "create logical volume {{ lv_name }}"
+          community.general.lvol:
+            vg: "{{ vg_name }}"
+            lv: "{{ lv_name  }}"
+            size: 500
+
+        - name: "format {{ lv_name }} with ext4"
+          community.general.filesystem:
+            dev: "/dev/{{ vg_name }}/{{ lv_name  }}"
+            fstype: ext4
+
+      rescue:
+
+        - ansible.builtin.debug:
+            msg: "failed to provision {{ lv_name }}"
+
+        - name: retry with a smaller size
+          community.general.lvol:
+            vg: "{{ vg_name }}"
+            lv: "{{ lv_name  }}"
+            size: 200
+      
+        - name: "retry formatting {{ lv_name }} with ext4"
+          community.general.filesystem:
+            dev: "/dev/{{ vg_name }}/{{ lv_name  }}"
+            fstype: ext4
+
+      when: ansible_lvm.vgs.<vg_name> is defined
+
+    - ansible.builtin.debug:
+        msg: "volume group {{ ansible_lvm.vgs.<vg_name> }} does not exist"
+      when: ansible_lvm.vgs.<vg_name> is not defined
+
+...
+```
+
 linux-system-roles
 ------------------
 
