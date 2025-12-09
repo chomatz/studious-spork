@@ -216,8 +216,11 @@ generate host file entries for all hosts
 
     - name: jinja 2 templating
       ansible.builtin.copy:
-        dest: /tmp/hosts
+        dest: /etc/hosts
         src: </path/to/jinja2/template>
+        owner: root
+        group: root
+        mode: "0644"
 
 ...
 ```
