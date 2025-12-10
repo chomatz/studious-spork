@@ -314,6 +314,79 @@ generate host file entries for all hosts
 ...
 ```
 
+### user management
+
+- `user_inventory.yml` contains user variables
+
+```
+---
+
+default_pass_1: "RemindfulFilterCould6Drab"
+default_pass_2: "UnopenedChaseDelusionRepayment3"
+default_pass_3: "PlatypusBook3ParasiteBrunt"
+
+users:
+  - name: jcena
+    groups: group1
+  - name: jmcclane
+    groups: group1
+  - name: jrambo
+    groups: group2
+  - name: jwick
+    groups: group3
+
+...
+```
+
+- create playbook
+
+```
+---
+
+- name: user provisioning - group 1
+  hosts: <nodes>
+  vars_files:
+    - /path/to/user_inventory.yml
+
+  tasks:
+
+    - name: "create group - {{ item.groups }}"
+      ansible.builtin.user:
+        name: "{{ item.name }}"
+        groups: "{{ item.groups }}"
+        password: "{{ default_pass_1 }}"
+        password_expire_max: 90
+      loop: "{{ users }}"
+      when: item.groups == "group1"
+
+    - name: "create group - {{ item.groups }}"
+      ansible.builtin.user:
+        name: "{{ item.name }}"
+        groups: "{{ item.groups }}"
+        password: "{{ default_pass_2 }}"
+        password_expire_max: 90
+      loop: "{{ users }}"
+      when: item.groups == "group2"
+
+    - name: "create group - {{ item.groups }}"
+      ansible.builtin.user:
+        name: "{{ item.name }}"
+        groups: "{{ item.groups }}"
+        password: "{{ default_pass_3 }}"
+        password_expire_max: 90
+      loop: "{{ users }}"
+      when: item.groups == "group3"
+
+...
+```
+
+```
+ansible-vault encrypt /path/to/vault.yml
+```
+```
+ansible-vault encrypt /path/to/vault.yml
+```
+
 secrets and vaults
 ------------------
 
