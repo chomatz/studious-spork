@@ -46,10 +46,30 @@ ansible-navigator:
     enable: false
 ```
 
-- create the `inventory` file
+- create an **ini** style `inventory` file
+
+```
+[groupa]
+servera
+serverb
+
+[groupb]
+serverc
+serverd some_var="some value"
+
+[groupc:children]
+groupa
+groupb
+
+[groupc:vars]
+var_name=value
+```
+
+- create a **yaml** style `inventory` file
 
 ```
 ---
+
 all:
   groupa:
     servera:
@@ -65,6 +85,7 @@ all:
     children:
       groupa:
       groupb:
+
 ...
 ```
 
@@ -200,7 +221,7 @@ generate host file entries for all hosts
 127.0.0.1 localhost localhost.localdomain localhost4 localhost4.localdomain4
 ::1 localhost localhost.localdomain localhost6 localhost6.localdomain6
 {% for host in ansible_play_hosts_all %}
-{{ hostvars[host].ansible_facts.default_ipv4.address }} {{ hostvars[host].ansible_facts.fqdn }} {{ hostvars[host].ansible_facts.hostname }}
+{{ hostvars[host].ansible_default_ipv4.address }} {{ hostvars[host].ansible_fqdn }} {{ hostvars[host].ansible_hostname }}
 {% endfor %}
 ```
 
@@ -268,7 +289,64 @@ generate host file entries for all hosts
     state: file
     mode: "01644"
 
+- name: create a directory index for http access
+  ansible.builtin.copy:
+    dest: /srv/mysite/index.html
+    content: "Hello World"
+    owner: root
+    group: apache
+    mode: "0644"
+    setype: httpd_sys_content_t
+
 ...
+```
+
+### save hostvars to a file on the remote server(s) for debugging purposes
+
+```
+---
+
+- name: export hostvars to a file
+  ansible.builtin.copy:
+    dest: "/tmp/{{ hostvars[inventory_hostname].ansible_fqdn }}.yml"
+    content: "{{ hostvars[inventory_hostname] | to_nice_yaml }}"
+
+...
+```
+
+secrets and vaults
+------------------
+
+### create a vault password file
+
+```
+echo "SomeLongRandomCaseSensitiveString" > /path/to/password_file.txt
+```
+
+### reference the password file in ansible.cfg
+
+```
+[defaults]
+vault_password_file = /path/to/password_file.txt
+```
+
+### create a vault
+
+```
+echo "my_var1: 'a generic string'" > /path/to/vault.yml
+echo "my_var2: 100" >> /path/to/vault.yml
+```
+
+### encrypt created vault
+
+```
+ansible-vault encrypt /path/to/vault.yml
+```
+
+### decrypt vault file
+
+```
+ansible-vault decrypt /path/to/vault.yml
 ```
 
 linux-system-roles
@@ -300,7 +378,7 @@ collections:
 ...
 ```
 
-- install collection(s) using `requirements.yml`
+### install collection(s) using `requirements.yml`
 
 ```
 ansible-galaxy collection install -r </path/to/requirements.yml>
@@ -331,7 +409,7 @@ ansible-galaxy role init --init-path </path/to/roles> <role_name>
 ...
 ```
 
-- install role(s) using `requirements.yml`
+### install role(s) using `requirements.yml`
 
 ```
 ansible-galaxy install -r </path/to/requirements.yml>
