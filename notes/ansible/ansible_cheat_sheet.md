@@ -415,6 +415,14 @@ ansible-vault encrypt /path/to/vault.yml
 ansible-vault decrypt /path/to/vault.yml
 ```
 
+### rekey vault file
+
+user needs to manually input old and new passwords
+
+```
+ansible-vault rekey --ask-vault-pass /path/to/another_vault.yml
+```
+
 linux-system-roles
 ------------------
 
