@@ -380,13 +380,6 @@ users:
 ...
 ```
 
-```
-ansible-vault encrypt /path/to/vault.yml
-```
-```
-ansible-vault encrypt /path/to/vault.yml
-```
-
 secrets and vaults
 ------------------
 
