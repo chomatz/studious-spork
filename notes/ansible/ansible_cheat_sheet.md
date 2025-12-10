@@ -380,6 +380,32 @@ users:
 ...
 ```
 
+### crontab
+
+```
+---
+
+- name: cron job
+  hosts: <nodes>
+
+  # ommiting minute, hour, day, month, or weekday defaults it to "*"
+
+  tasks:
+
+    - name: job
+      ansible.builtin.cron:
+        name: example
+        minute: 1
+        hour: 2
+        day: 3
+        month: 4
+        weekday: 5 # 0=sun ... 6=sat
+        job: 'logger "just leaving this here"'
+        user: <username> # optional
+
+...
+```
+
 secrets and vaults
 ------------------
 
