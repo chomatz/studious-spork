@@ -354,7 +354,7 @@ users:
       ansible.builtin.user:
         name: "{{ item.name }}"
         groups: "{{ item.groups }}"
-        password: "{{ default_pass_1 }}"
+        password: "{{ default_pass_1 | password_hash('sha512') }}"
         password_expire_max: 90
       loop: "{{ users }}"
       when: item.groups == "group1"
@@ -363,7 +363,7 @@ users:
       ansible.builtin.user:
         name: "{{ item.name }}"
         groups: "{{ item.groups }}"
-        password: "{{ default_pass_2 }}"
+        password: "{{ default_pass_2 | password_hash('sha512') }}"
         password_expire_max: 90
       loop: "{{ users }}"
       when: item.groups == "group2"
